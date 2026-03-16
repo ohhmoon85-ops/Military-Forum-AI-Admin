@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   BrainCircuit, FileText, ChevronRight, Loader2,
   BarChart2, BookOpen, Shield, MessageSquareText,
@@ -31,6 +31,13 @@ export default function EvaluationClient() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDemo, setIsDemo] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/status')
+      .then((r) => r.json())
+      .then((d) => setIsDemo(d.demoMode ?? false))
+      .catch(() => {})
+  }, [])
 
   const selected = papers.find((p) => p.id === selectedId) ?? null
 
@@ -138,6 +145,18 @@ export default function EvaluationClient() {
 
       {/* ── 오른쪽: 평가 패널 ──────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0">
+        {/* 데모 모드 상단 배너 */}
+        {isDemo && (
+          <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 mb-4">
+            <Info size={14} className="text-amber-500 flex-shrink-0" />
+            <p className="text-xs text-amber-700">
+              현재 <strong>데모 모드</strong>로 동작 중입니다. 실제 Claude AI 분석을 사용하려면{' '}
+              <code className="bg-amber-100 px-1 py-0.5 rounded text-[11px]">ANTHROPIC_API_KEY</code>를 설정하고{' '}
+              <code className="bg-amber-100 px-1 py-0.5 rounded text-[11px]">DEMO_MODE=false</code>로 변경하세요.
+            </p>
+          </div>
+        )}
+
         {!selected ? (
           <EmptyState />
         ) : (
@@ -187,17 +206,6 @@ export default function EvaluationClient() {
                 </div>
               )}
 
-              {/* 데모 모드 안내 */}
-              {isDemo && selected.result && (
-                <div className="mt-3 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                  <Info size={13} className="text-amber-500 flex-shrink-0" />
-                  <p className="text-xs text-amber-700">
-                    현재 <strong>데모 모드</strong>입니다. 실제 Claude AI 분석을 위해{' '}
-                    <code className="bg-amber-100 px-1 py-0.5 rounded text-[11px]">.env.local</code>에{' '}
-                    <code className="bg-amber-100 px-1 py-0.5 rounded text-[11px]">ANTHROPIC_API_KEY</code>를 설정하세요.
-                  </p>
-                </div>
-              )}
             </div>
 
             {/* 로딩 상태 */}
