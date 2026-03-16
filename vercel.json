@@ -1,0 +1,45 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+
+  "regions": ["icn1"],
+
+  "functions": {
+    "app/api/evaluate/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/extract/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/feedback/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
+    "app/api/format/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    }
+  },
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
+      ]
+    }
+  ],
+
+  "env": {
+    "ANTHROPIC_API_KEY": "@anthropic-api-key",
+    "DEMO_MODE": "false"
+  }
+}

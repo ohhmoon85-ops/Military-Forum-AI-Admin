@@ -1,0 +1,67 @@
+import { GitCompare, Wand2, Printer, Columns2 } from 'lucide-react'
+import FormattingClient from '@/components/formatting/FormattingClient'
+
+export default function FormattingPage() {
+  return (
+    <div className="max-w-7xl mx-auto">
+      {/* 페이지 헤더 */}
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center">
+              <GitCompare size={15} className="text-orange-600" />
+            </div>
+            <span className="text-xs text-gray-400 font-medium">Phase 4</span>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">양식 수정 · Diff 비교</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            학술지 규격 서식을 자동 적용하고 원문과 수정본을 좌우로 비교합니다
+          </p>
+        </div>
+
+        {/* 기능 요약 */}
+        <div className="hidden md:flex items-center gap-2">
+          {[
+            { icon: <Wand2 size={10} />, text: '공백·문장부호 자동 교정' },
+            { icon: <GitCompare size={10} />, text: '군사 용어 표준화' },
+            { icon: <Columns2 size={10} />, text: 'Side-by-Side Diff' },
+            { icon: <Printer size={10} />, text: 'PDF 인쇄 저장' },
+          ].map((b) => (
+            <span
+              key={b.text}
+              className="flex items-center gap-1 text-[11px] bg-orange-50 text-orange-700 font-medium px-2.5 py-1 rounded-full border border-orange-100"
+            >
+              {b.icon}
+              {b.text}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <FormattingClient />
+
+      {/* 학술지 규격 안내 */}
+      <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-card p-5">
+        <h3 className="text-sm font-bold text-gray-700 mb-3">군사논단 학술지 서식 규격</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: '글자 크기', value: '11pt', icon: '🔤' },
+            { label: '줄간격', value: '160%', icon: '📏' },
+            { label: '용지', value: 'A4', icon: '📄' },
+            { label: '분량', value: '20~25매', icon: '📋' },
+            { label: '여백 (위/아래)', value: '30mm', icon: '↕' },
+            { label: '여백 (좌/우)', value: '25mm', icon: '↔' },
+            { label: '초록', value: '한글+영문', icon: '📝' },
+            { label: '서체', value: '맑은 고딕', icon: '🖋' },
+          ].map((spec) => (
+            <div key={spec.label} className="bg-gray-50 rounded-lg p-3">
+              <span className="text-lg">{spec.icon}</span>
+              <p className="text-xs text-gray-500 mt-1">{spec.label}</p>
+              <p className="text-sm font-bold text-gray-800">{spec.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
