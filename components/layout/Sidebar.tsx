@@ -112,16 +112,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
       >
         {/* 발간 현황 배너 */}
         <div className="mx-3 mt-3 rounded-lg bg-gradient-to-br from-military-primary to-military-secondary p-3">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2">
             <FileText size={14} className="text-blue-200" />
-            <span className="text-blue-200 text-[11px] font-medium">현재 심사 회차</span>
+            <span className="text-white font-bold text-sm">군사논단 관리시스템</span>
           </div>
-          <p className="text-white font-bold text-sm">통권 제121호</p>
-          <p className="text-blue-300 text-[11px]">2025년 봄 · 마감 2025.02.15</p>
-          <div className="mt-2 bg-navy-700/40 rounded-full h-1.5">
-            <div className="bg-military-gold h-1.5 rounded-full" style={{ width: '65%' }} />
-          </div>
-          <p className="text-blue-300 text-[10px] mt-1">투고 접수 65% 완료</p>
+          <p className="text-blue-300 text-[11px] mt-1">사단법인 한국군사학회</p>
         </div>
 
         {/* 메인 네비게이션 */}
