@@ -12,8 +12,36 @@ import Link from 'next/link'
 import StatCard from '@/components/dashboard/StatCard'
 import WorkflowStepper from '@/components/dashboard/WorkflowStepper'
 import RecentSubmissions from '@/components/dashboard/RecentSubmissions'
+import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
 
-export default function DashboardPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function DashboardPage() {
+  // ─── DB에서 통계 집계 ────────────────────────────────────────────────────
+  let statusCounts = { total: 0, pending: 0, reviewing: 0, accepted: 0, rejected: 0, revision: 0 }
+  let evaluatedCount = 0
+  let acceptRate = '0.0'
+
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseServerClient()
+      const { data: stats } = await supabase.from('papers').select('status')
+      if (stats) {
+        for (const row of stats) {
+          statusCounts.total++
+          const s = row.status as keyof typeof statusCounts
+          if (s in statusCounts) statusCounts[s]++
+        }
+        evaluatedCount = statusCounts.accepted + statusCounts.rejected + statusCounts.revision
+        acceptRate = statusCounts.total > 0
+          ? ((statusCounts.accepted / statusCounts.total) * 100).toFixed(1)
+          : '0.0'
+      }
+    } catch {
+      // DB 오류 시 기본값 유지
+    }
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* 페이지 헤더 */}
@@ -39,28 +67,28 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="총 투고 건수"
-          value={47}
+          value={statusCounts.total}
           subtitle="이번 심사 회차 누계"
           icon={<FileText size={20} />}
           color="blue"
         />
         <StatCard
           title="AI 평가 완료"
-          value={32}
-          subtitle="68% 처리 완료"
+          value={evaluatedCount}
+          subtitle={statusCounts.total > 0 ? `${Math.round((evaluatedCount / statusCounts.total) * 100)}% 처리 완료` : '대기 중'}
           icon={<BrainCircuit size={20} />}
           color="purple"
         />
         <StatCard
           title="선정 확정"
-          value={12}
-          subtitle="채택률 25.5%"
+          value={statusCounts.accepted}
+          subtitle={`채택률 ${acceptRate}%`}
           icon={<CheckCircle2 size={20} />}
           color="green"
         />
         <StatCard
           title="미선정 / 수정요청"
-          value={8}
+          value={statusCounts.rejected + statusCounts.revision}
           subtitle="재투고 피드백 발송 완료"
           icon={<XCircle size={20} />}
           color="red"

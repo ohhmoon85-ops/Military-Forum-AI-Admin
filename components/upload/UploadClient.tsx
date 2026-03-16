@@ -136,6 +136,8 @@ export default function UploadClient() {
                     ...f,
                     status: 'done',
                     progress: 100,
+                    paperId: json.paperId ?? undefined,
+                    paperNumber: json.paperNumber ?? undefined,
                     result: {
                       text: json.text,
                       preview: json.preview,

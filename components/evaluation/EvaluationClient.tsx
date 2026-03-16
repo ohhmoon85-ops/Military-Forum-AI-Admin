@@ -15,6 +15,10 @@ import FeedbackPanel from './FeedbackPanel'
 import type { PaperMeta, EvaluationResult } from '@/lib/types/evaluation'
 import { DEMO_PAPERS } from '@/lib/demo-papers'
 
+interface Props {
+  initialPapers?: PaperMeta[]
+}
+
 type TabKey = 'score' | 'summary' | 'plagiarism' | 'feedback'
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: string }[] = [
@@ -24,8 +28,8 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: string 
   { key: 'feedback',   label: '재투고 피드백',  icon: <MessageSquareText size={15} /> },
 ]
 
-export default function EvaluationClient() {
-  const [papers, setPapers] = useState<PaperMeta[]>(DEMO_PAPERS)
+export default function EvaluationClient({ initialPapers }: Props) {
+  const [papers, setPapers] = useState<PaperMeta[]>(initialPapers ?? DEMO_PAPERS)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [tab, setTab] = useState<TabKey>('score')
   const [loading, setLoading] = useState(false)
@@ -42,19 +46,33 @@ export default function EvaluationClient() {
   const selected = papers.find((p) => p.id === selectedId) ?? null
 
   const handleEvaluate = async (paper: PaperMeta) => {
-    if (!paper.text) {
-      setError('논문 텍스트가 없습니다. 업로드 페이지에서 먼저 파일을 추출해 주세요.')
-      return
-    }
     setError(null)
     setLoading(true)
     setTab('score')
 
     try {
+      // 텍스트가 없고 DB ID가 있으면 DB에서 lazy-load
+      let textToEvaluate = paper.text
+      if (!textToEvaluate && paper._dbId) {
+        const detailRes = await fetch(`/api/papers/${paper._dbId}`)
+        const detailJson = await detailRes.json()
+        textToEvaluate = detailJson.paper?.extracted_text ?? ''
+      }
+
+      if (!textToEvaluate || textToEvaluate.trim().length < 100) {
+        setError('논문 텍스트가 없습니다. 업로드 페이지에서 먼저 파일을 추출해 주세요.')
+        setLoading(false)
+        return
+      }
+
       const res = await fetch('/api/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: paper.title, text: paper.text }),
+        body: JSON.stringify({
+          title: paper.title,
+          text: textToEvaluate,
+          paperId: paper._dbId,   // DB 저장용
+        }),
       })
       const json = await res.json()
       if (!res.ok || json.error) throw new Error(json.error ?? '평가 실패')

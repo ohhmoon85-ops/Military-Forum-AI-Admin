@@ -27,4 +27,6 @@ export interface UploadedFile {
   progress: number
   result?: ExtractResult
   error?: string
+  paperId?: string      // Supabase DB UUID (추출 완료 후 수신)
+  paperNumber?: string  // 'SUB-2025-001' 형식
 }

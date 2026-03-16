@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -166,6 +167,38 @@ export async function POST(request: NextRequest) {
     // 미리보기 (앞 800자)
     const preview = buildPreview(extractedText)
 
+    // ─── DB에 논문 레코드 저장 (Supabase 설정 시) ────────────────────────────
+    let paperId: string | null = null
+    let paperNumber: string | null = null
+
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseServerClient()
+        const { data: paperData } = await supabase
+          .from('papers')
+          .insert({
+            title: analysis.title || fileName.replace(/\.[^.]+$/, ''),
+            file_name: fileName,
+            file_size: fileSize,
+            mime_type: mimeType,
+            page_count: pageCount,
+            extracted_text: extractedText,
+            analysis: analysis as unknown as Record<string, unknown>,
+            status: 'pending',
+          })
+          .select('id, paper_number')
+          .single()
+
+        if (paperData) {
+          paperId = paperData.id
+          paperNumber = paperData.paper_number
+        }
+      } catch (dbErr) {
+        // DB 저장 실패는 비치명적 — 추출 결과는 정상 반환
+        console.error('논문 DB 저장 실패 (비치명적):', dbErr)
+      }
+    }
+
     return NextResponse.json({
       success: true,
       fileName,
@@ -175,6 +208,8 @@ export async function POST(request: NextRequest) {
       text: extractedText,
       preview,
       analysis,
+      paperId,
+      paperNumber,
     })
   } catch (err) {
     console.error('extract API 오류:', err)

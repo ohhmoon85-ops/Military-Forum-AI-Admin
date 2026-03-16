@@ -69,7 +69,8 @@ export interface EvaluationResult {
 // ─── 논문 메타데이터 ─────────────────────────────────────────────────────────
 
 export interface PaperMeta {
-  id: string
+  id: string          // paper_number ('SUB-2025-001') 또는 임시 UUID
+  _dbId?: string      // Supabase UUID (DB 저장·조회용)
   title: string
   author: string
   affiliation: string

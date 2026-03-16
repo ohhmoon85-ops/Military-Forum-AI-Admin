@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import type { EvaluationResult } from '@/lib/types/evaluation'
+import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -173,13 +174,35 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const { paperId } = body as { title?: string; text?: string; paperId?: string }
     const apiKey = process.env.ANTHROPIC_API_KEY
     const demoMode = !apiKey || process.env.DEMO_MODE === 'true'
+
+    // ─── DB 저장 헬퍼 (공통) ─────────────────────────────────────────────────
+    async function saveEvaluationToDB(result: EvaluationResult, isDemo: boolean) {
+      if (!paperId || !isSupabaseConfigured()) return
+      const supabase = getSupabaseServerClient()
+      const newStatus =
+        result.recommendation === 'accept' ? 'accepted' :
+        result.recommendation === 'revision' ? 'revision' : 'rejected'
+      await Promise.allSettled([
+        supabase.from('evaluations').insert({
+          paper_id: paperId,
+          result: result as unknown as Record<string, unknown>,
+          total_score: result.total_score,
+          recommendation: result.recommendation,
+          model_used: result.model_used,
+          is_demo: isDemo,
+        }),
+        supabase.from('papers').update({ status: newStatus }).eq('id', paperId),
+      ])
+    }
 
     // ── 데모 모드 ────────────────────────────────────────────────────────────
     if (demoMode) {
       await new Promise((r) => setTimeout(r, 1800)) // 실감나는 딜레이
       const result = buildDemoResult(title, text)
+      await saveEvaluationToDB(result, true)
       return NextResponse.json({ result, demo: true })
     }
 
@@ -224,6 +247,7 @@ export async function POST(request: NextRequest) {
       model_used: 'claude-sonnet-4-5',
     }
 
+    await saveEvaluationToDB(result, false)
     return NextResponse.json({ result, demo: false })
   } catch (err) {
     console.error('/api/evaluate 오류:', err)
