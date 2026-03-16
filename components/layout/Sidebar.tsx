@@ -25,7 +25,6 @@ interface NavItem {
   href: string
   icon: React.ReactNode
   badge?: string | number
-  phase?: string
   description?: string
 }
 
@@ -40,30 +39,24 @@ const mainNavItems: NavItem[] = [
     label: '논문 업로드',
     href: '/upload',
     icon: <Upload size={18} />,
-    badge: '2',
-    phase: 'Phase 2',
     description: 'PDF / DOCX 드래그 업로드',
   },
   {
     label: 'AI 평가 · 분석',
     href: '/evaluation',
     icon: <BrainCircuit size={18} />,
-    badge: '5',
-    phase: 'Phase 3',
     description: '적합성 점수 · 요약 · 표절',
   },
   {
     label: '양식 수정 · 비교',
     href: '/formatting',
     icon: <GitCompare size={18} />,
-    phase: 'Phase 4',
     description: '자동 서식 적용 & Diff 뷰',
   },
   {
     label: '재투고 피드백',
     href: '/feedback',
     icon: <MessageSquareText size={18} />,
-    phase: 'Phase 3',
     description: '수정 로드맵 자동 생성',
   },
 ]
@@ -86,11 +79,6 @@ const secondaryNavItems: NavItem[] = [
   },
 ]
 
-const phaseColors: Record<string, string> = {
-  'Phase 2': 'bg-purple-100 text-purple-700',
-  'Phase 3': 'bg-green-100 text-green-700',
-  'Phase 4': 'bg-orange-100 text-orange-700',
-}
 
 export default function Sidebar({ isOpen }: SidebarProps) {
   const pathname = usePathname()
@@ -185,16 +173,6 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="truncate">{item.label}</span>
-            {item.phase && (
-              <span
-                className={cn(
-                  'text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0',
-                  phaseColors[item.phase] ?? 'bg-gray-100 text-gray-600'
-                )}
-              >
-                {item.phase}
-              </span>
-            )}
           </div>
           {item.description && (
             <p className="text-[10px] text-gray-400 truncate mt-0.5">{item.description}</p>
