@@ -40,10 +40,9 @@ export default function DashboardPage() {
         <StatCard
           title="총 투고 건수"
           value={47}
-          subtitle="전 분기 대비 +8건"
+          subtitle="이번 심사 회차 누계"
           icon={<FileText size={20} />}
           color="blue"
-          trend={{ value: 20, label: '전분기 대비' }}
         />
         <StatCard
           title="AI 평가 완료"
@@ -51,7 +50,6 @@ export default function DashboardPage() {
           subtitle="68% 처리 완료"
           icon={<BrainCircuit size={20} />}
           color="purple"
-          trend={{ value: 12, label: '지난 주 대비' }}
         />
         <StatCard
           title="선정 확정"
