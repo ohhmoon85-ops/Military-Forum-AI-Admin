@@ -7,7 +7,6 @@ import {
   ArrowRight,
   TrendingUp,
   AlertTriangle,
-  Clock,
 } from 'lucide-react'
 import Link from 'next/link'
 import StatCard from '@/components/dashboard/StatCard'
@@ -22,14 +21,10 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
           <p className="text-sm text-gray-500 mt-1">
-            계간 군사논단 · 통권 제121호 (2025년 봄) 심사 현황
+            사단법인 한국군사학회 투고 논문 심사 현황
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium px-3 py-2 rounded-lg">
-            <Clock size={14} />
-            <span>원고 마감까지 <strong>18일</strong> 남음 (2025.02.15)</span>
-          </div>
           <Link
             href="/upload"
             className="flex items-center gap-2 bg-military-primary hover:bg-military-secondary text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm"

@@ -42,12 +42,12 @@ export default function GNB({ onMenuToggle }: GNBProps) {
         </div>
       </div>
 
-      {/* 중앙: 현재 발간호 정보 */}
+      {/* 중앙: 시스템 상태 */}
       <div className="flex-1 flex justify-center">
         <div className="hidden md:flex items-center gap-2 bg-navy-700/50 rounded-full px-4 py-1.5">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           <span className="text-blue-200 text-xs font-medium">
-            계간 군사논단 · 통권 제121호 (2025년 봄) 심사 진행 중
+            계간 군사논단 투고 관리시스템
           </span>
         </div>
       </div>
