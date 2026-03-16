@@ -39,6 +39,6 @@
   ],
 
   "env": {
-    "DEMO_MODE": "false"
+    "DEMO_MODE": "true"
   }
 }

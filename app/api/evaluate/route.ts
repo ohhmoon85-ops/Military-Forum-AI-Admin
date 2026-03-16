@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
     const client = new Anthropic({ apiKey })
 
     const message = await client.messages.create({
-      model: 'claude-opus-4-5',
+      model: 'claude-sonnet-4-5',
       max_tokens: 3000,
       system: SYSTEM_PROMPT,
       messages: [
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
     const result: EvaluationResult = {
       ...parsed,
       generated_at: new Date().toISOString(),
-      model_used: 'claude-opus-4-5',
+      model_used: 'claude-sonnet-4-5',
     }
 
     return NextResponse.json({ result, demo: false })
