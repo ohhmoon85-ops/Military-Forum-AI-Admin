@@ -12,7 +12,8 @@ import Link from 'next/link'
 import StatCard from '@/components/dashboard/StatCard'
 import WorkflowStepper from '@/components/dashboard/WorkflowStepper'
 import RecentSubmissions from '@/components/dashboard/RecentSubmissions'
-import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
+import { getDb, isDatabaseConfigured } from '@/lib/db'
+import { papers } from '@/lib/schema'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,21 +23,19 @@ export default async function DashboardPage() {
   let evaluatedCount = 0
   let acceptRate = '0.0'
 
-  if (isSupabaseConfigured()) {
+  if (isDatabaseConfigured()) {
     try {
-      const supabase = getSupabaseServerClient()
-      const { data: stats } = await supabase.from('papers').select('status')
-      if (stats) {
-        for (const row of stats) {
-          statusCounts.total++
-          const s = row.status as keyof typeof statusCounts
-          if (s in statusCounts) statusCounts[s]++
-        }
-        evaluatedCount = statusCounts.accepted + statusCounts.rejected + statusCounts.revision
-        acceptRate = statusCounts.total > 0
-          ? ((statusCounts.accepted / statusCounts.total) * 100).toFixed(1)
-          : '0.0'
+      const db = getDb()
+      const stats = await db.select({ status: papers.status }).from(papers)
+      for (const row of stats) {
+        statusCounts.total++
+        const s = row.status as keyof typeof statusCounts
+        if (s in statusCounts) statusCounts[s]++
       }
+      evaluatedCount = statusCounts.accepted + statusCounts.rejected + statusCounts.revision
+      acceptRate = statusCounts.total > 0
+        ? ((statusCounts.accepted / statusCounts.total) * 100).toFixed(1)
+        : '0.0'
     } catch {
       // DB 오류 시 기본값 유지
     }

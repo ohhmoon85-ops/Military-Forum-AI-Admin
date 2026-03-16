@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import type { EvaluationResult } from '@/lib/types/evaluation'
-import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
+import { getDb, isDatabaseConfigured } from '@/lib/db'
+import { papers, evaluations } from '@/lib/schema'
+import { eq } from 'drizzle-orm'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -180,21 +182,21 @@ export async function POST(request: NextRequest) {
 
     // ─── DB 저장 헬퍼 (공통) ─────────────────────────────────────────────────
     async function saveEvaluationToDB(result: EvaluationResult, isDemo: boolean) {
-      if (!paperId || !isSupabaseConfigured()) return
-      const supabase = getSupabaseServerClient()
+      if (!paperId || !isDatabaseConfigured()) return
       const newStatus =
         result.recommendation === 'accept' ? 'accepted' :
         result.recommendation === 'revision' ? 'revision' : 'rejected'
+      const db = getDb()
       await Promise.allSettled([
-        supabase.from('evaluations').insert({
-          paper_id: paperId,
-          result: result as unknown as Record<string, unknown>,
-          total_score: result.total_score,
+        db.insert(evaluations).values({
+          paper_id:       paperId,
+          result:         result as unknown as Record<string, unknown>,
+          total_score:    result.total_score,
           recommendation: result.recommendation,
-          model_used: result.model_used,
-          is_demo: isDemo,
+          model_used:     result.model_used,
+          is_demo:        isDemo,
         }),
-        supabase.from('papers').update({ status: newStatus }).eq('id', paperId),
+        db.update(papers).set({ status: newStatus }).where(eq(papers.id, paperId)),
       ])
     }
 

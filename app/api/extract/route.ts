@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseServerClient, isSupabaseConfigured } from '@/lib/supabase'
+import { getDb, isDatabaseConfigured } from '@/lib/db'
+import { papers } from '@/lib/schema'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -171,23 +172,22 @@ export async function POST(request: NextRequest) {
     let paperId: string | null = null
     let paperNumber: string | null = null
 
-    if (isSupabaseConfigured()) {
+    if (isDatabaseConfigured()) {
       try {
-        const supabase = getSupabaseServerClient()
-        const { data: paperData } = await supabase
-          .from('papers')
-          .insert({
-            title: analysis.title || fileName.replace(/\.[^.]+$/, ''),
-            file_name: fileName,
-            file_size: fileSize,
-            mime_type: mimeType,
-            page_count: pageCount,
+        const db = getDb()
+        const [paperData] = await db
+          .insert(papers)
+          .values({
+            title:          analysis.title || fileName.replace(/\.[^.]+$/, ''),
+            file_name:      fileName,
+            file_size:      fileSize,
+            mime_type:      mimeType,
+            page_count:     pageCount,
             extracted_text: extractedText,
-            analysis: analysis as unknown as Record<string, unknown>,
-            status: 'pending',
+            analysis:       analysis as unknown as Record<string, unknown>,
+            status:         'pending',
           })
-          .select('id, paper_number')
-          .single()
+          .returning({ id: papers.id, paper_number: papers.paper_number })
 
         if (paperData) {
           paperId = paperData.id
