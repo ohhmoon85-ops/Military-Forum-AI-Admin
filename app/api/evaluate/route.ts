@@ -212,8 +212,8 @@ export async function POST(request: NextRequest) {
     const client = new Anthropic({ apiKey })
 
     const message = await client.messages.create({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 3000,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
       system: SYSTEM_PROMPT,
       messages: [
         { role: 'user', content: buildUserPrompt(title, text) },
@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
     const result: EvaluationResult = {
       ...parsed,
       generated_at: new Date().toISOString(),
-      model_used: 'claude-sonnet-4-5',
+      model_used: 'claude-haiku-4-5-20251001',
     }
 
     await saveEvaluationToDB(result, false)
