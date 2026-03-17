@@ -9,11 +9,10 @@ export default function FeedbackPage() {
           <div className="w-7 h-7 bg-green-50 rounded-lg flex items-center justify-center">
             <MessageSquareText size={15} className="text-green-600" />
           </div>
-          <span className="text-xs text-gray-400 font-medium">Phase 3</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">재투고 피드백</h1>
         <p className="text-sm text-gray-500 mt-1">
-          미선정·수정요청 논문에 대한 AI 맞춤형 수정 로드맵을 제공합니다
+          미선정·수정요청 기고문에 대한 AI 맞춤형 수정 로드맵을 제공합니다
         </p>
       </div>
 
@@ -25,7 +24,7 @@ export default function FeedbackPage() {
         <h2 className="text-lg font-bold text-gray-800 mb-2">피드백은 AI 평가 패널에서 확인하세요</h2>
         <p className="text-sm text-gray-500 max-w-md mx-auto mb-6">
           재투고 피드백은 AI 평가·분석 페이지의 <strong>&apos;재투고 피드백&apos;</strong> 탭에서
-          논문별로 직접 생성하고 확인할 수 있습니다.
+          기고문별로 직접 생성하고 확인할 수 있습니다.
         </p>
         <Link
           href="/evaluation"
@@ -41,7 +40,7 @@ export default function FeedbackPage() {
         {[
           {
             title: '맞춤형 수정 가이드',
-            desc: '논문 내용을 분석하여 미선정·수정요청 사유에 맞는 구체적인 수정 방법을 안내합니다.',
+            desc: '기고문 내용을 분석하여 미선정·수정요청 사유에 맞는 구체적인 수정 방법을 안내합니다.',
             icon: '📋',
           },
           {

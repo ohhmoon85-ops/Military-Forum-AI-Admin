@@ -12,7 +12,7 @@ interface Step {
 const steps: Step[] = [
   {
     id: 1,
-    label: '논문 접수',
+    label: '기고문 접수',
     sublabel: 'PDF/DOCX 업로드',
     icon: <Upload size={18} />,
     status: 'completed',

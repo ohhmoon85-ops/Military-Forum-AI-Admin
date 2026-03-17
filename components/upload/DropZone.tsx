@@ -107,7 +107,7 @@ export default function DropZone({
       ) : (
         <>
           <p className="text-base font-bold text-gray-700">
-            논문 파일을 이곳에 드래그하거나{' '}
+            기고문 파일을 이곳에 드래그하거나{' '}
             <span className="text-military-accent underline underline-offset-2 cursor-pointer">
               파일을 선택
             </span>

@@ -59,7 +59,7 @@ export default async function RecentSubmissions() {
       <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-gray-800">최근 투고 현황</h3>
-          <p className="text-xs text-gray-400 mt-0.5">최근 접수 논문 10건</p>
+          <p className="text-xs text-gray-400 mt-0.5">최근 접수 기고문 10건</p>
         </div>
         <Link href="/upload" className="text-xs text-military-accent font-medium flex items-center gap-1 hover:underline">
           전체 보기 <ChevronRight size={12} />
@@ -69,10 +69,10 @@ export default async function RecentSubmissions() {
       {rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <FileText size={32} className="text-gray-200 mb-3" />
-          <p className="text-sm font-semibold text-gray-500">접수된 논문이 없습니다</p>
-          <p className="text-xs text-gray-400 mt-1">논문 업로드 페이지에서 파일을 등록하면 여기에 표시됩니다.</p>
+          <p className="text-sm font-semibold text-gray-500">접수된 기고문이 없습니다</p>
+          <p className="text-xs text-gray-400 mt-1">기고문 업로드 페이지에서 파일을 등록하면 여기에 표시됩니다.</p>
           <Link href="/upload" className="mt-4 text-xs text-military-accent font-semibold hover:underline">
-            논문 업로드하기 →
+            기고문 업로드하기 →
           </Link>
         </div>
       ) : (
@@ -81,7 +81,7 @@ export default async function RecentSubmissions() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">접수번호</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">논문 제목</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">기고문 제목</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">저자 / 소속</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">분야</th>
                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide">AI 점수</th>

@@ -47,7 +47,7 @@ export default function SettingsClient({ dbConnected }: Props) {
         <h2 className="text-sm font-semibold text-red-700">데이터 초기화</h2>
       </div>
       <p className="text-xs text-gray-500 mb-5">
-        투고 논문, AI 평가 결과를 모두 삭제합니다. 새 심사 회차를 시작할 때 사용하세요.
+        투고 기고문, AI 평가 결과를 모두 삭제합니다. 새 심사 회차를 시작할 때 사용하세요.
         <strong className="text-red-600"> 이 작업은 되돌릴 수 없습니다.</strong>
       </p>
 
@@ -57,7 +57,7 @@ export default function SettingsClient({ dbConnected }: Props) {
           <CheckCircle2 size={16} className="text-green-500 flex-shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-semibold text-green-800">초기화 완료</p>
-            <p className="text-xs text-green-600 mt-0.5">모든 논문 및 평가 데이터가 삭제되었습니다.</p>
+            <p className="text-xs text-green-600 mt-0.5">모든 기고문 및 평가 데이터가 삭제되었습니다.</p>
           </div>
           <button
             onClick={handleRetry}
@@ -113,7 +113,7 @@ export default function SettingsClient({ dbConnected }: Props) {
             <div>
               <p className="text-sm font-semibold text-red-800">정말로 초기화하시겠습니까?</p>
               <p className="text-xs text-red-600 mt-1">
-                접수된 논문 전체와 AI 평가 결과가 영구 삭제됩니다.
+                접수된 기고문 전체와 AI 평가 결과가 영구 삭제됩니다.
               </p>
             </div>
           </div>

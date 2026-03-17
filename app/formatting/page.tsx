@@ -11,7 +11,6 @@ export default function FormattingPage() {
             <div className="w-7 h-7 bg-orange-50 rounded-lg flex items-center justify-center">
               <GitCompare size={15} className="text-orange-600" />
             </div>
-            <span className="text-xs text-gray-400 font-medium">Phase 4</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">양식 수정 · Diff 비교</h1>
           <p className="text-sm text-gray-500 mt-1">

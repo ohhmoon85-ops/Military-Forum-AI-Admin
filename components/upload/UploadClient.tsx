@@ -302,7 +302,7 @@ export default function UploadClient() {
       {files.length === 0 && (
         <div className="text-center py-8">
           <Upload size={32} className="text-gray-200 mx-auto mb-3" />
-          <p className="text-sm text-gray-400">파일을 드래그하거나 위 영역을 클릭하여 논문을 추가하세요</p>
+          <p className="text-sm text-gray-400">파일을 드래그하거나 위 영역을 클릭하여 기고문을 추가하세요</p>
         </div>
       )}
     </div>
@@ -315,7 +315,7 @@ function UploadStepper({ step }: { step: 1 | 2 | 3 }) {
   const steps = [
     { id: 1, label: '파일 선택', sub: 'PDF / DOCX 업로드' },
     { id: 2, label: '텍스트 추출', sub: 'AI 분석 전처리' },
-    { id: 3, label: '분석 준비', sub: 'Phase 3 AI 평가' },
+    { id: 3, label: '분석 준비', sub: 'AI 평가' },
   ]
 
   return (

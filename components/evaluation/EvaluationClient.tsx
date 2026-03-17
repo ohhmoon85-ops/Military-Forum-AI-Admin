@@ -60,7 +60,7 @@ export default function EvaluationClient({ initialPapers }: Props) {
       }
 
       if (!textToEvaluate || textToEvaluate.trim().length < 100) {
-        setError('논문 텍스트가 없습니다. 업로드 페이지에서 먼저 파일을 추출해 주세요.')
+        setError('기고문 텍스트가 없습니다. 업로드 페이지에서 먼저 파일을 추출해 주세요.')
         setLoading(false)
         return
       }
@@ -102,10 +102,10 @@ export default function EvaluationClient({ initialPapers }: Props) {
 
   return (
     <div className="flex gap-6 h-full">
-      {/* ── 왼쪽: 논문 목록 ──────────────────────────────────────────────── */}
+      {/* ── 왼쪽: 기고문 목록 ──────────────────────────────────────────────── */}
       <div className="w-72 flex-shrink-0 space-y-2">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-700">투고 논문 목록</h2>
+          <h2 className="text-sm font-semibold text-gray-700">투고 기고문 목록</h2>
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold">
             {papers.length}건
           </span>
@@ -179,7 +179,7 @@ export default function EvaluationClient({ initialPapers }: Props) {
           <EmptyState />
         ) : (
           <div className="space-y-4">
-            {/* 논문 메타 헤더 */}
+            {/* 기고문 메타 헤더 */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-card">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -233,7 +233,7 @@ export default function EvaluationClient({ initialPapers }: Props) {
                   <Loader2 size={28} className="animate-spin text-military-primary" />
                 </div>
                 <p className="text-sm font-semibold text-gray-700">AI 평가 분석 중...</p>
-                <p className="text-xs text-gray-400">논문 내용을 분석하여 종합 평가를 생성하고 있습니다</p>
+                <p className="text-xs text-gray-400">기고문 내용을 분석하여 종합 평가를 생성하고 있습니다</p>
                 <div className="flex items-center gap-1.5 mt-1">
                   {['주제 적합성 검토', '논리 구조 분석', '표절 위험 탐지', '요약 생성'].map((s, i) => (
                     <span key={i} className="text-[11px] bg-military-light text-military-primary px-2 py-0.5 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.3}s` }}>
@@ -317,9 +317,9 @@ function EmptyState() {
       <div className="w-16 h-16 bg-military-light rounded-2xl flex items-center justify-center mb-4">
         <BrainCircuit size={30} className="text-military-primary" />
       </div>
-      <h3 className="text-base font-bold text-gray-700">논문을 선택하세요</h3>
+      <h3 className="text-base font-bold text-gray-700">기고문을 선택하세요</h3>
       <p className="text-sm text-gray-400 mt-2 max-w-sm">
-        왼쪽 목록에서 심사할 논문을 선택하고 AI 평가를 시작하세요
+        왼쪽 목록에서 심사할 기고문을 선택하고 AI 평가를 시작하세요
       </p>
       <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-500">
         <FeatureChip icon={<BarChart2 size={11} />} text="5개 항목 종합 점수" />

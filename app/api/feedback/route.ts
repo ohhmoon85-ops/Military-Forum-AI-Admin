@@ -5,8 +5,8 @@ import type { FeedbackItem } from '@/lib/types/evaluation'
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
-const FEEDBACK_SYSTEM = `당신은 계간 군사논단 편집위원이자 논문 작성 전문 멘토입니다.
-미선정 또는 수정요청 논문에 대해 다음 분기에 채택될 수 있도록 구체적이고 실행 가능한 수정 로드맵을 제공합니다.
+const FEEDBACK_SYSTEM = `당신은 계간 군사논단 편집위원이자 기고문 작성 전문 멘토입니다.
+미선정 또는 수정요청 기고문에 대해 다음 분기에 채택될 수 있도록 구체적이고 실행 가능한 수정 로드맵을 제공합니다.
 반드시 유효한 JSON 배열 형식으로만 응답하세요.`
 
 export async function POST(request: NextRequest) {
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     const client = new Anthropic({ apiKey })
 
-    const prompt = `다음 논문의 수정 로드맵을 생성해 주세요.
+    const prompt = `다음 기고문의 수정 로드맵을 생성해 주세요.
 
 제목: ${title}
 현재 점수: ${total_score}점 (판정: ${recommendation === 'reject' ? '미선정' : '수정 요청'})
@@ -103,7 +103,7 @@ function buildDemoRoadmap(recommendation: string, weaknesses: string[]): Feedbac
       priority: 'high',
       category: '참고문헌 보완',
       issue: '최신 연구 동향 반영 부족',
-      suggestion: '최근 5년(2020~2025) 이내 국내외 학술지 논문 5~10편을 추가 인용하세요. 특히 RISS·KISS·Google Scholar에서 핵심 키워드로 검색하여 최신 논문을 확인하고, 인용 형식은 APA 7판 또는 학회 규정에 통일하세요.',
+      suggestion: '최근 5년(2020~2025) 이내 국내외 학술지 기고문 5~10편을 추가 인용하세요. 특히 RISS·KISS·Google Scholar에서 핵심 키워드로 검색하여 최신 기고문을 확인하고, 인용 형식은 APA 7판 또는 학회 규정에 통일하세요.',
       effort: '1일',
     },
     {
@@ -117,7 +117,7 @@ function buildDemoRoadmap(recommendation: string, weaknesses: string[]): Feedbac
       priority: 'medium',
       category: '구성 재편',
       issue: '장·절 구성의 균형이 맞지 않음',
-      suggestion: '각 장의 분량을 균등하게 조정하세요(권장: 서론 2매, 본론 16~18매, 결론 2~3매). 소제목을 활용하여 독자의 이해를 돕고, 각 절이 논문의 핵심 주장과 어떻게 연결되는지 명시하세요.',
+      suggestion: '각 장의 분량을 균등하게 조정하세요(권장: 서론 2매, 본론 16~18매, 결론 2~3매). 소제목을 활용하여 독자의 이해를 돕고, 각 절이 기고문의 핵심 주장과 어떻게 연결되는지 명시하세요.',
       effort: '1일',
     },
     {

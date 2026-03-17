@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
     // 미리보기 (앞 800자)
     const preview = buildPreview(extractedText)
 
-    // ─── DB에 논문 레코드 저장 (Supabase 설정 시) ────────────────────────────
+    // ─── DB에 기고문 레코드 저장 (Supabase 설정 시) ────────────────────────────
     let paperId: string | null = null
     let paperNumber: string | null = null
 
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
         }
       } catch (dbErr) {
         // DB 저장 실패는 비치명적 — 추출 결과는 정상 반환
-        console.error('논문 DB 저장 실패 (비치명적):', dbErr)
+        console.error('기고문 DB 저장 실패 (비치명적):', dbErr)
       }
     }
 

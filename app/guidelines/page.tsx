@@ -4,10 +4,10 @@ const guidelines = [
   {
     category: '원고 분야',
     items: [
-      '군사관련 연구, 군사학의 학문·교육 체계 발전 및 군사사상에 관한 논문',
-      '국방·군사 관련 정책·제도·군사전략 및 전쟁사·부기체계 등 국가안보문제에 관한 논문',
-      '북한 및 주변국가들의 군사적 전문지식에 관한 논문',
-      '국방경제, 군사비, 방위산업 및 안보문제와 연계되는 경제적 비용에 관한 논문 또는 논평기사',
+      '군사관련 연구, 군사학의 학문·교육 체계 발전 및 군사사상에 관한 기고문',
+      '국방·군사 관련 정책·제도·군사전략 및 전쟁사·부기체계 등 국가안보문제에 관한 기고문',
+      '북한 및 주변국가들의 군사적 전문지식에 관한 기고문',
+      '국방경제, 군사비, 방위산업 및 안보문제와 연계되는 경제적 비용에 관한 기고문 또는 논평기사',
     ],
   },
   {
@@ -35,7 +35,7 @@ export default function GuidelinesPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">투고 규정</h1>
-        <p className="text-sm text-gray-500 mt-1">계간 군사논단 논문 투고 규정 및 심사 기준</p>
+        <p className="text-sm text-gray-500 mt-1">계간 군사논단 기고문 투고 규정 및 심사 기준</p>
       </div>
 
       <div className="bg-gradient-to-br from-military-primary to-military-secondary text-white rounded-xl p-6 mb-6">

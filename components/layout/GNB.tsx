@@ -9,7 +9,7 @@ interface GNBProps {
 }
 
 const notifications = [
-  { id: 1, message: '신규 논문 투고가 접수되었습니다.', time: '5분 전', unread: true },
+  { id: 1, message: '신규 기고문 투고가 접수되었습니다.', time: '5분 전', unread: true },
   { id: 2, message: 'AI 평가가 완료되었습니다. (홍길동 저)', time: '1시간 전', unread: true },
   { id: 3, message: '표절 검사 결과가 준비되었습니다.', time: '2시간 전', unread: false },
 ]

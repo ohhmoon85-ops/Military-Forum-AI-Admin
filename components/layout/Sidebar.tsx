@@ -36,7 +36,7 @@ const mainNavItems: NavItem[] = [
     description: '전체 현황 요약',
   },
   {
-    label: '논문 업로드',
+    label: '기고문 업로드',
     href: '/upload',
     icon: <Upload size={18} />,
     description: 'PDF / DOCX 드래그 업로드',

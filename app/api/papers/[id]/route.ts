@@ -22,7 +22,7 @@ export async function GET(
       .where(eq(papers.id, params.id))
       .limit(1)
 
-    if (!paper) return NextResponse.json({ error: '논문을 찾을 수 없습니다.' }, { status: 404 })
+    if (!paper) return NextResponse.json({ error: '기고문을 찾을 수 없습니다.' }, { status: 404 })
 
     const evals = await db
       .select()

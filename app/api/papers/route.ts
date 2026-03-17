@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(papers.submitted_at))
       .limit(limit)
 
-    // 각 논문의 최신 평가 점수 조회
+    // 각 기고문의 최신 평가 점수 조회
     const result = await Promise.all(
       rows.map(async (paper) => {
         const evals = await db

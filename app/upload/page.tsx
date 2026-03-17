@@ -18,11 +18,10 @@ export default function UploadPage() {
             <div className="w-7 h-7 bg-military-light rounded-lg flex items-center justify-center">
               <Upload size={15} className="text-military-primary" />
             </div>
-            <span className="text-xs text-gray-400 font-medium">Phase 2</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">논문 업로드</h1>
+          <h1 className="text-2xl font-bold text-gray-900">기고문 업로드</h1>
           <p className="text-sm text-gray-500 mt-1">
-            드래그 앤 드롭으로 논문 파일을 업로드하고 텍스트를 추출합니다
+            드래그 앤 드롭으로 기고문 파일을 업로드하고 텍스트를 추출합니다
           </p>
         </div>
       </div>
@@ -81,7 +80,7 @@ export default function UploadPage() {
               </li>
               <li className="flex items-start gap-1.5">
                 <span className="text-military-accent mt-0.5">•</span>
-                추출된 텍스트는 AI 평가 (Phase 3)에 자동으로 전달됩니다
+                추출된 텍스트는 AI 평가에 자동으로 전달됩니다
               </li>
               <li className="flex items-start gap-1.5">
                 <span className="text-military-accent mt-0.5">•</span>
@@ -119,7 +118,7 @@ export default function UploadPage() {
               <ProcessStep
                 num={4}
                 label="AI 평가 준비"
-                desc="Phase 3으로 전달"
+                desc="AI 평가 페이지로 전달"
                 color="bg-military-gold"
               />
             </div>

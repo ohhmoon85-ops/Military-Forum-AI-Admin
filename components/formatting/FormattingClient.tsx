@@ -22,7 +22,7 @@ interface FormatResult {
   aiRefined: boolean
 }
 
-// 게재 확정 논문만 서식 수정 대상
+// 게재 확정 기고문만 서식 수정 대상
 const ELIGIBLE_STATUSES = ['accepted', 'reviewing', 'revision']
 
 export default function FormattingClient() {
@@ -74,10 +74,10 @@ export default function FormattingClient() {
 
   return (
     <div className="flex gap-6">
-      {/* ── 왼쪽: 논문 목록 ──────────────────────────────────────────────── */}
+      {/* ── 왼쪽: 기고문 목록 ──────────────────────────────────────────────── */}
       <div className="w-72 flex-shrink-0 space-y-2">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-700">논문 목록</h2>
+          <h2 className="text-sm font-semibold text-gray-700">기고문 목록</h2>
           <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
             서식 수정 대상 선택
           </span>
@@ -126,7 +126,7 @@ export default function FormattingClient() {
         })}
 
         <p className="text-[10px] text-gray-400 text-center pt-1">
-          미선정 논문은 서식 수정 대상에서 제외됩니다
+          미선정 기고문은 서식 수정 대상에서 제외됩니다
         </p>
       </div>
 
@@ -136,7 +136,7 @@ export default function FormattingClient() {
           <EmptyState />
         ) : (
           <>
-            {/* 논문 메타 + 서식 옵션 */}
+            {/* 기고문 메타 + 서식 옵션 */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-card p-4">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>
@@ -305,7 +305,7 @@ export default function FormattingClient() {
                 />
 
                 {/* 수정본 전체 텍스트 */}
-                <FormattedTextPanel formatted={result.formatted} title={selected.title} />
+                <FormattedTextPanel formatted={result.formatted} title={selected.title} onDownload={handleDownloadTxt} />
               </>
             )}
 
@@ -330,7 +330,7 @@ export default function FormattingClient() {
 
 // ─── 수정본 전체 패널 (인쇄 포함) ─────────────────────────────────────────────
 
-function FormattedTextPanel({ formatted, title }: { formatted: string; title: string }) {
+function FormattedTextPanel({ formatted, title, onDownload }: { formatted: string; title: string; onDownload: () => void }) {
   const [collapsed, setCollapsed] = useState(true)
 
   return (
@@ -339,8 +339,15 @@ function FormattedTextPanel({ formatted, title }: { formatted: string; title: st
         <h3 className="text-sm font-bold text-gray-800">수정본 전체 텍스트</h3>
         <div className="flex items-center gap-2">
           <button
+            onClick={onDownload}
+            className="flex items-center gap-1 text-xs text-military-accent hover:text-military-primary font-medium border border-military-accent/30 rounded px-2 py-1 hover:bg-military-light transition-colors"
+          >
+            <Download size={12} />
+            TXT 다운로드
+          </button>
+          <button
             onClick={() => setCollapsed((p) => !p)}
-            className="text-xs text-military-accent hover:underline font-medium"
+            className="text-xs text-gray-500 hover:underline font-medium"
           >
             {collapsed ? '전체 보기' : '접기'}
           </button>
@@ -432,9 +439,9 @@ function EmptyState() {
       <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
         <Wand2 size={30} className="text-orange-500" />
       </div>
-      <h3 className="text-base font-bold text-gray-700">논문을 선택하세요</h3>
+      <h3 className="text-base font-bold text-gray-700">기고문을 선택하세요</h3>
       <p className="text-sm text-gray-400 mt-2 max-w-sm">
-        왼쪽에서 서식 수정할 논문을 선택하세요. 심사 중·수정 요청 논문이 대상입니다.
+        왼쪽에서 서식 수정할 기고문을 선택하세요. 심사 중·수정 요청 기고문이 대상입니다.
       </p>
       <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-500">
         <FeatureChip icon={<Wand2 size={11} />} text="공백·문장부호 자동 교정" />

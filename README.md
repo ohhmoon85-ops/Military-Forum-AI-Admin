@@ -16,7 +16,7 @@
 | Phase | 기능 | 설명 |
 |-------|------|------|
 | **1** | 대시보드 | 투고 현황 통계, 워크플로우 스테퍼, 최근 접수 테이블 |
-| **2** | 논문 업로드 | PDF/DOCX 드래그 앤 드롭, 서버 사이드 텍스트 추출, 형식 준수 자동 검사 |
+| **2** | 기고문 업로드 | PDF/DOCX 드래그 앤 드롭, 서버 사이드 텍스트 추출, 형식 준수 자동 검사 |
 | **3** | AI 평가 분석 | Claude AI 5개 항목 채점(100점), Executive Summary, 표절 위험도, 재투고 로드맵 |
 | **4** | 양식 수정·Diff | 군사 용어 표준화, 문장부호 교정, Side-by-Side Diff 뷰어, PDF 인쇄 다운로드 |
 | **5** | 배포·문서 | Vercel 배포, GitHub Actions CI, 보안 헤더, 환경 변수 관리 |
@@ -31,12 +31,12 @@
 ├────────────┬────────────────────────────────────────────────────┤
 │            │  대시보드                                           │
 │ 대시보드   │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐             │
-│ 논문 업로드│  │총 47건│ │완료32│ │선정12│ │미선8 │  통계 카드  │
+│ 기고문 업로드│  │총 47건│ │완료32│ │선정12│ │미선8 │  통계 카드  │
 │ AI 평가   │  └──────┘ └──────┘ └──────┘ └──────┘             │
 │ 양식 수정 │                                                      │
 │ 재투고피드백  워크플로우: ①접수 → ②AI평가 → ③수정 → ④피드백   │
 │ 투고 규정 │                                                      │
-│ 통계 리포트  최근 투고 논문 테이블 (AI 점수 바 포함)             │
+│ 통계 리포트  최근 투고 기고문 테이블 (AI 점수 바 포함)             │
 │ 시스템 설정│                                                      │
 └────────────┴────────────────────────────────────────────────────┘
 ```
@@ -145,14 +145,14 @@ military-forum-admin/
 ├── app/                        # Next.js App Router
 │   ├── layout.tsx              # 루트 레이아웃 (GNB + Sidebar)
 │   ├── page.tsx                # 대시보드 홈
-│   ├── upload/page.tsx         # Phase 2: 논문 업로드
+│   ├── upload/page.tsx         # Phase 2: 기고문 업로드
 │   ├── evaluation/page.tsx     # Phase 3: AI 평가·분석
 │   ├── formatting/page.tsx     # Phase 4: 서식 수정·Diff
 │   ├── feedback/page.tsx       # Phase 3: 재투고 피드백
 │   ├── guidelines/page.tsx     # 투고 규정 전문
 │   └── api/
 │       ├── extract/route.ts    # 파일 텍스트 추출 (pdf-parse / mammoth)
-│       ├── evaluate/route.ts   # Claude AI 논문 평가
+│       ├── evaluate/route.ts   # Claude AI 기고문 평가
 │       ├── feedback/route.ts   # 재투고 로드맵 생성
 │       └── format/route.ts     # 서식 자동 변환
 │
@@ -167,7 +167,7 @@ military-forum-admin/
 ├── lib/
 │   ├── utils.ts                # cn(), formatDate(), 상태 레이블
 │   ├── format-rules.ts         # 서식 규칙 엔진 + 군사 용어 사전
-│   ├── demo-papers.ts          # 5건 샘플 논문 데이터
+│   ├── demo-papers.ts          # 5건 샘플 기고문 데이터
 │   └── types/
 │       └── evaluation.ts       # TypeScript 타입 정의
 │
@@ -213,11 +213,11 @@ Body: file=<File>
 ```
 
 ### `POST /api/evaluate`
-논문 텍스트를 Claude AI로 평가합니다. API 키 미설정 시 데모 결과를 반환합니다.
+기고문 텍스트를 Claude AI로 평가합니다. API 키 미설정 시 데모 결과를 반환합니다.
 
 ```json
 // Request
-{ "title": "논문 제목", "text": "본문 텍스트" }
+{ "title": "기고문 제목", "text": "본문 텍스트" }
 
 // Response
 {
@@ -234,13 +234,13 @@ Body: file=<File>
 ```
 
 ### `POST /api/format`
-서식 규칙을 적용하여 논문 텍스트를 변환합니다.
+서식 규칙을 적용하여 기고문 텍스트를 변환합니다.
 
 ```json
 // Request
 {
   "text": "원본 텍스트",
-  "title": "논문 제목",
+  "title": "기고문 제목",
   "options": {
     "normalizeWhitespace": true,
     "fixPunctuation": true,

@@ -48,7 +48,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
           <p className="text-sm text-gray-500 mt-1">
-            사단법인 한국군사학회 투고 논문 심사 현황
+            사단법인 한국군사학회 투고 기고문 심사 현황
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             className="flex items-center gap-2 bg-military-primary hover:bg-military-secondary text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm"
           >
             <Upload size={15} />
-            논문 업로드
+            기고문 업로드
           </Link>
         </div>
       </div>
@@ -113,7 +113,7 @@ export default async function DashboardPage() {
               <QuickAction
                 href="/upload"
                 icon={<Upload size={16} />}
-                label="논문 업로드"
+                label="기고문 업로드"
                 desc="PDF / DOCX 드래그 업로드"
                 color="bg-military-light text-military-primary"
               />
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
                 href="/formatting"
                 icon={<TrendingUp size={16} />}
                 label="양식 자동 수정"
-                desc="선정 논문 서식 변환"
+                desc="선정 기고문 서식 변환"
                 color="bg-orange-50 text-orange-700"
               />
             </div>
@@ -154,7 +154,7 @@ export default async function DashboardPage() {
             </div>
             <div className="space-y-2">
               <AlertItem
-                title="표절 의심 논문"
+                title="표절 의심 기고문"
                 desc="유사도 38% 초과 - 1건"
                 urgency="high"
               />

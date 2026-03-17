@@ -65,7 +65,7 @@ export default function SummaryPanel({ summary, title }: SummaryPanelProps) {
         </p>
         <h3 className="text-base font-bold leading-snug line-clamp-2">{title}</h3>
         <p className="text-xs text-blue-200 mt-1">
-          AI가 생성한 A4 반 페이지 분량의 논문 핵심 요약본입니다
+          AI가 생성한 A4 반 페이지 분량의 기고문 핵심 요약본입니다
         </p>
       </div>
 

@@ -73,7 +73,7 @@ export default function FeedbackPanel({ result, paperId, paperTitle, paperText }
             </div>
             <p className="text-sm text-gray-600">
               {result.recommendation === 'reject'
-                ? '미선정 논문의 다음 분기 채택을 위한 구체적인 수정 보완 계획입니다.'
+                ? '미선정 기고문의 다음 분기 채택을 위한 구체적인 수정 보완 계획입니다.'
                 : '수정 요청 사항을 단계별로 처리하여 다음 심사에서 최종 선정될 수 있도록 안내합니다.'}
             </p>
             {generated && (
@@ -118,7 +118,7 @@ export default function FeedbackPanel({ result, paperId, paperTitle, paperText }
         <div className="text-center py-12 text-gray-400">
           <MessageSquareText size={40} className="mx-auto mb-3 opacity-40" />
           <p className="text-sm font-medium">위 버튼을 눌러 AI 맞춤 피드백을 생성하세요</p>
-          <p className="text-xs mt-1">논문 내용을 분석하여 구체적인 수정 가이드를 제공합니다</p>
+          <p className="text-xs mt-1">기고문 내용을 분석하여 구체적인 수정 가이드를 제공합니다</p>
         </div>
       )}
 
@@ -126,7 +126,7 @@ export default function FeedbackPanel({ result, paperId, paperTitle, paperText }
         <div className="flex flex-col items-center justify-center py-16 gap-3">
           <Loader2 size={32} className="animate-spin text-military-accent" />
           <p className="text-sm text-gray-500 font-medium">AI가 수정 로드맵을 생성하고 있습니다...</p>
-          <p className="text-xs text-gray-400">논문 내용을 분석하여 맞춤 피드백을 준비 중입니다</p>
+          <p className="text-xs text-gray-400">기고문 내용을 분석하여 맞춤 피드백을 준비 중입니다</p>
         </div>
       )}
 
@@ -205,7 +205,7 @@ export default function FeedbackPanel({ result, paperId, paperTitle, paperText }
         <div className="bg-military-light rounded-xl border border-blue-100 p-4">
           <h4 className="text-sm font-semibold text-military-primary mb-2">재투고 절차 안내</h4>
           <ol className="space-y-1.5 text-xs text-gray-600">
-            <li className="flex items-start gap-2"><span className="w-4 h-4 rounded-full bg-military-primary text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>위 수정 로드맵을 참고하여 논문을 수정하세요</li>
+            <li className="flex items-start gap-2"><span className="w-4 h-4 rounded-full bg-military-primary text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">1</span>위 수정 로드맵을 참고하여 기고문을 수정하세요</li>
             <li className="flex items-start gap-2"><span className="w-4 h-4 rounded-full bg-military-primary text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">2</span>수정 사항을 정리한 &apos;수정 대조표&apos;를 작성하세요</li>
             <li className="flex items-start gap-2"><span className="w-4 h-4 rounded-full bg-military-primary text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">3</span>다음 분기 마감일 15일 전까지 kaoms@naver.com으로 제출하세요</li>
             <li className="flex items-start gap-2"><span className="w-4 h-4 rounded-full bg-military-primary text-white text-[9px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">4</span>제목에 [재투고] 표시 및 이전 접수번호({paperId})를 기재해 주세요</li>

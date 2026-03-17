@@ -66,7 +66,7 @@ export interface EvaluationResult {
   model_used: string
 }
 
-// ─── 논문 메타데이터 ─────────────────────────────────────────────────────────
+// ─── 기고문 메타데이터 ─────────────────────────────────────────────────────────
 
 export interface PaperMeta {
   id: string          // paper_number ('SUB-2025-001') 또는 임시 UUID

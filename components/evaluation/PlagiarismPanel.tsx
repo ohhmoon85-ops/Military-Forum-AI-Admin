@@ -128,7 +128,7 @@ export default function PlagiarismPanel({ plagiarism }: PlagiarismPanelProps) {
           />
           <EthicsItem
             title="자기 표절"
-            desc="이전에 발표한 자신의 논문 내용을 재활용할 경우에도 출처를 표기하고 편집위원회에 사전 고지해야 합니다."
+            desc="이전에 발표한 자신의 기고문 내용을 재활용할 경우에도 출처를 표기하고 편집위원회에 사전 고지해야 합니다."
           />
           <EthicsItem
             title="표절 기준"
