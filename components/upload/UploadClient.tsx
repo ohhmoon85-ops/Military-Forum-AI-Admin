@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { upload } from '@vercel/blob/client'
 import { FileRejection } from 'react-dropzone'
 import {
   Upload,
@@ -93,30 +94,65 @@ export default function UploadClient() {
       const rawFile = (item as UploadedFile & { _raw: File })._raw
       if (!rawFile) continue
 
-      // uploading 상태
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === item.id ? { ...f, status: 'uploading', progress: 20 } : f
-        )
-      )
-
-      await sleep(300)
-
-      // extracting 상태
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === item.id ? { ...f, status: 'extracting', progress: 55 } : f
-        )
-      )
-
       try {
-        const formData = new FormData()
-        formData.append('file', rawFile)
+        let res: Response
 
-        const res = await fetch('/api/extract', {
+        // Vercel Blob 업로드 시도 (대용량 파일 지원)
+        const blobCheck = await fetch('/api/upload', {
           method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'blob.generate-client-token', payload: { pathname: rawFile.name, callbackUrl: `${location.origin}/api/upload` } }),
         })
+
+        if (blobCheck.status !== 503) {
+          // Vercel Blob 직접 업로드
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id ? { ...f, status: 'uploading', progress: 10 } : f
+            )
+          )
+          const blob = await upload(rawFile.name, rawFile, {
+            access: 'public',
+            handleUploadUrl: '/api/upload',
+            onUploadProgress: ({ percentage }) => {
+              setFiles((prev) =>
+                prev.map((f) =>
+                  f.id === item.id ? { ...f, progress: Math.round(10 + percentage * 0.4) } : f
+                )
+              )
+            },
+          })
+
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id ? { ...f, status: 'extracting', progress: 55 } : f
+            )
+          )
+
+          res = await fetch('/api/extract', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              blobUrl: blob.url,
+              fileName: rawFile.name,
+              fileSize: rawFile.size,
+              mimeType: rawFile.type,
+            }),
+          })
+        } else {
+          // 로컬 개발 폴백: FormData 직접 전송
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === item.id ? { ...f, status: 'extracting', progress: 55 } : f
+            )
+          )
+          const formData = new FormData()
+          formData.append('file', rawFile)
+          res = await fetch('/api/extract', {
+            method: 'POST',
+            body: formData,
+          })
+        }
 
         const json = await res.json()
 

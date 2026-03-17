@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { del } from '@vercel/blob'
 import { getDb, isDatabaseConfigured } from '@/lib/db'
 import { papers } from '@/lib/schema'
 
@@ -68,16 +69,41 @@ function buildPreview(text: string, maxLen = 800): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const file = formData.get('file')
+    let fileName: string
+    let fileSize: number
+    let mimeType: string
+    let buffer: Buffer
+    let blobUrl: string | null = null
 
-    if (!file || !(file instanceof Blob)) {
-      return NextResponse.json({ error: '파일이 없습니다.' }, { status: 400 })
+    const contentType = request.headers.get('content-type') ?? ''
+
+    if (contentType.includes('application/json')) {
+      // ── Vercel Blob 업로드 후 URL로 요청 ──────────────────────────────────
+      const body = await request.json() as { blobUrl: string; fileName: string; fileSize: number; mimeType: string }
+      blobUrl = body.blobUrl
+      fileName = body.fileName
+      fileSize = body.fileSize
+      mimeType = body.mimeType
+
+      const blobRes = await fetch(blobUrl)
+      if (!blobRes.ok) {
+        return NextResponse.json({ error: 'Blob 파일을 가져오지 못했습니다.' }, { status: 502 })
+      }
+      buffer = Buffer.from(await blobRes.arrayBuffer())
+    } else {
+      // ── FormData (로컬 개발용 폴백) ────────────────────────────────────────
+      const formData = await request.formData()
+      const file = formData.get('file')
+
+      if (!file || !(file instanceof Blob)) {
+        return NextResponse.json({ error: '파일이 없습니다.' }, { status: 400 })
+      }
+
+      fileName = (file as File).name ?? 'unknown'
+      fileSize = file.size
+      mimeType = file.type
+      buffer = Buffer.from(await file.arrayBuffer())
     }
-
-    const fileName = (file as File).name ?? 'unknown'
-    const fileSize = file.size
-    const mimeType = file.type
 
     // 50 MB 제한
     if (fileSize > 52_428_800) {
@@ -86,8 +112,6 @@ export async function POST(request: NextRequest) {
         { status: 413 }
       )
     }
-
-    const buffer = Buffer.from(await file.arrayBuffer())
     let extractedText = ''
     let pageCount = 0
 
@@ -197,6 +221,11 @@ export async function POST(request: NextRequest) {
         // DB 저장 실패는 비치명적 — 추출 결과는 정상 반환
         console.error('기고문 DB 저장 실패 (비치명적):', dbErr)
       }
+    }
+
+    // Blob 임시 파일 삭제 (텍스트 추출 완료 후)
+    if (blobUrl) {
+      try { await del(blobUrl) } catch { /* 비치명적 */ }
     }
 
     return NextResponse.json({
