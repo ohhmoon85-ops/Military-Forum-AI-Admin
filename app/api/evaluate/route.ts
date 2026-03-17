@@ -225,16 +225,9 @@ export async function POST(request: NextRequest) {
       .map((b) => (b as { type: 'text'; text: string }).text)
       .join('')
 
-    // JSON 파싱 — 코드블록 제거 후 첫 번째 { ... } 블록 추출
-    let jsonStr = rawText
-      .replace(/^```json\s*/im, '')
-      .replace(/^```\s*/im, '')
-      .replace(/\s*```$/im, '')
-      .trim()
-
-    // { } 사이의 JSON 객체만 추출 (앞뒤 텍스트 무시)
-    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/)
-    if (jsonMatch) jsonStr = jsonMatch[0]
+    // JSON 파싱 — 응답에서 { ... } 블록만 직접 추출 (코드블록·앞뒤 텍스트 무시)
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+    const jsonStr = jsonMatch ? jsonMatch[0] : rawText
 
     let parsed: Omit<EvaluationResult, 'generated_at' | 'model_used'>
     try {
