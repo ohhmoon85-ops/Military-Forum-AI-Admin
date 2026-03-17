@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { del } from '@vercel/blob'
+import Anthropic from '@anthropic-ai/sdk'
 import { getDb, isDatabaseConfigured } from '@/lib/db'
 import { papers } from '@/lib/schema'
 
@@ -120,16 +121,52 @@ export async function POST(request: NextRequest) {
       mimeType === 'application/pdf' ||
       fileName.toLowerCase().endsWith('.pdf')
     ) {
+      // 1차: pdf-parse로 텍스트 추출 시도
       try {
-        // pdf-parse의 테스트 파일 로드 버그를 우회하기 위해 lib 경로 직접 import
         const pdfParse = require('pdf-parse/lib/pdf-parse.js') as (buf: Buffer, opts?: object) => Promise<{ text: string; numpages: number }>
         const data = await pdfParse(buffer, { max: 0 })
         extractedText = data.text ?? ''
         pageCount = data.numpages ?? 0
       } catch (err) {
-        console.error('PDF 파싱 오류:', err)
+        console.error('pdf-parse 오류 (Claude 폴백 시도):', err)
+      }
+
+      // 2차: 텍스트가 없거나 부족하면 Claude PDF 처리로 폴백
+      if (extractedText.trim().length < 50 && process.env.ANTHROPIC_API_KEY) {
+        try {
+          const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+          const base64Pdf = buffer.toString('base64')
+
+          const response = await (anthropic.messages.create as (p: object) => Promise<{ content: Array<{ type: string; text?: string }> }>)({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 8192,
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'document',
+                  source: { type: 'base64', media_type: 'application/pdf', data: base64Pdf },
+                },
+                {
+                  type: 'text',
+                  text: '이 PDF 문서의 전체 텍스트를 원문 그대로 추출해주세요. 제목, 저자, 초록, 본문, 참고문헌을 모두 포함하세요. 형식 설명 없이 텍스트만 출력하세요.',
+                },
+              ],
+            }],
+          })
+
+          const content = response.content[0]
+          if (content.type === 'text' && content.text) {
+            extractedText = content.text
+          }
+        } catch (claudeErr) {
+          console.error('Claude PDF 폴백 오류:', claudeErr)
+        }
+      }
+
+      if (extractedText.trim().length < 50) {
         return NextResponse.json(
-          { error: 'PDF 텍스트 추출에 실패했습니다. 스캔 PDF는 지원되지 않습니다.' },
+          { error: '텍스트를 추출할 수 없습니다. 스캔 이미지 PDF이거나 암호화된 파일입니다. DOCX 형식으로 변환 후 업로드해 주세요.' },
           { status: 422 }
         )
       }
@@ -177,10 +214,7 @@ export async function POST(request: NextRequest) {
 
     if (!extractedText || extractedText.trim().length < 50) {
       return NextResponse.json(
-        {
-          error:
-            '텍스트를 추출할 수 없습니다. 스캔 이미지 PDF이거나 내용이 없는 파일입니다.',
-        },
+        { error: '텍스트를 추출할 수 없습니다. 지원하지 않는 파일 형식이거나 내용이 없는 파일입니다.' },
         { status: 422 }
       )
     }
