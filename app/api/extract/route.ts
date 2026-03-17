@@ -135,7 +135,12 @@ export async function POST(request: NextRequest) {
       if (extractedText.trim().length < 50 && process.env.ANTHROPIC_API_KEY) {
         try {
           const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-          const base64Pdf = buffer.toString('base64')
+
+          // URL 방식 우선 (대용량 PDF, base64 32MB 제한 우회)
+          // base64 방식 폴백 (로컬 개발 등 URL 없는 경우)
+          const docSource = blobUrl
+            ? { type: 'url' as const, url: blobUrl }
+            : { type: 'base64' as const, media_type: 'application/pdf' as const, data: buffer.toString('base64') }
 
           const response = await (anthropic.messages.create as (p: object) => Promise<{ content: Array<{ type: string; text?: string }> }>)({
             model: 'claude-haiku-4-5-20251001',
@@ -143,10 +148,7 @@ export async function POST(request: NextRequest) {
             messages: [{
               role: 'user',
               content: [
-                {
-                  type: 'document',
-                  source: { type: 'base64', media_type: 'application/pdf', data: base64Pdf },
-                },
+                { type: 'document', source: docSource },
                 {
                   type: 'text',
                   text: '이 PDF 문서의 전체 텍스트를 원문 그대로 추출해주세요. 제목, 저자, 초록, 본문, 참고문헌을 모두 포함하세요. 형식 설명 없이 텍스트만 출력하세요.',
