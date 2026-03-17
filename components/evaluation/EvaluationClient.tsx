@@ -36,6 +36,33 @@ export default function EvaluationClient({ initialPapers }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [isDemo, setIsDemo] = useState(false)
 
+  // 클라이언트에서 직접 최신 기고문 목록 로드 (캐시 우회)
+  useEffect(() => {
+    fetch('/api/papers?limit=50', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.papers && d.papers.length > 0) {
+          const mapped: PaperMeta[] = d.papers.map((p: {
+            id: string; paper_number?: string; title: string; author: string;
+            affiliation: string; category: string; status: string; submitted_at: string;
+            evaluations?: { total_score?: number; recommendation?: string }[]
+          }) => ({
+            id:          p.paper_number ?? p.id,
+            _dbId:       p.id,
+            title:       p.title,
+            author:      p.author,
+            affiliation: p.affiliation,
+            category:    p.category,
+            status:      p.status as PaperMeta['status'],
+            submittedAt: String(p.submitted_at).split('T')[0],
+            prevScore:   p.evaluations?.[0]?.total_score ?? undefined,
+          }))
+          setPapers(mapped)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   useEffect(() => {
     fetch('/api/status')
       .then((r) => r.json())
