@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
 
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2000,
+      max_tokens: 4096,
       system: SYSTEM_PROMPT,
       messages: [
         { role: 'user', content: buildUserPrompt(title, text) },
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
     } catch {
       console.error('JSON 파싱 실패 원문:', rawText.slice(0, 800))
       return NextResponse.json(
-        { error: 'AI 응답 파싱에 실패했습니다. 다시 시도해 주세요.' },
+        { error: `AI 응답 파싱 실패. 원문 앞부분: ${rawText.slice(0, 200)}` },
         { status: 422 }
       )
     }
