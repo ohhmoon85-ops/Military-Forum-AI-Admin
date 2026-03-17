@@ -36,7 +36,7 @@ function buildUserPrompt(title: string, text: string): string {
 본문 (앞부분):
 ${snippet}
 
-위 기고문에 대해 아래 JSON 스키마에 정확히 맞춰 응답하세요:
+위 기고문에 대해 아래 JSON 스키마에 정확히 맞춰 응답하세요. JSON 객체만 출력하고 다른 텍스트는 절대 포함하지 마세요:
 {
   "total_score": <number 0-100>,
   "recommendation": <"accept"|"revision"|"reject">,
@@ -225,18 +225,22 @@ export async function POST(request: NextRequest) {
       .map((b) => (b as { type: 'text'; text: string }).text)
       .join('')
 
-    // JSON 파싱 (마크다운 코드블록 제거)
-    const jsonStr = rawText
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/\s*```$/i, '')
+    // JSON 파싱 — 코드블록 제거 후 첫 번째 { ... } 블록 추출
+    let jsonStr = rawText
+      .replace(/^```json\s*/im, '')
+      .replace(/^```\s*/im, '')
+      .replace(/\s*```$/im, '')
       .trim()
+
+    // { } 사이의 JSON 객체만 추출 (앞뒤 텍스트 무시)
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/)
+    if (jsonMatch) jsonStr = jsonMatch[0]
 
     let parsed: Omit<EvaluationResult, 'generated_at' | 'model_used'>
     try {
       parsed = JSON.parse(jsonStr)
     } catch {
-      console.error('JSON 파싱 실패:', rawText.slice(0, 500))
+      console.error('JSON 파싱 실패 원문:', rawText.slice(0, 800))
       return NextResponse.json(
         { error: 'AI 응답 파싱에 실패했습니다. 다시 시도해 주세요.' },
         { status: 422 }
