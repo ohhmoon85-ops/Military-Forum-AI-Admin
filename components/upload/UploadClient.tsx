@@ -111,7 +111,10 @@ export default function UploadClient() {
               f.id === item.id ? { ...f, status: 'uploading', progress: 10 } : f
             )
           )
-          const blob = await upload(rawFile.name, rawFile, {
+          // 한글/특수문자 포함 파일명을 UUID 기반으로 변환 (Blob API 호환)
+          const ext = rawFile.name.split('.').pop() ?? 'bin'
+          const safeName = `${item.id}.${ext}`
+          const blob = await upload(safeName, rawFile, {
             access: 'public',
             handleUploadUrl: '/api/upload',
             onUploadProgress: ({ percentage }) => {
