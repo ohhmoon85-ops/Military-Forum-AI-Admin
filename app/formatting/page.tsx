@@ -1,7 +1,55 @@
 import { GitCompare, Wand2, Printer, Columns2 } from 'lucide-react'
 import FormattingClient from '@/components/formatting/FormattingClient'
+import { getDb, isDatabaseConfigured } from '@/lib/db'
+import { papers } from '@/lib/schema'
+import { desc, inArray } from 'drizzle-orm'
+import { DEMO_PAPERS } from '@/lib/demo-papers'
+import type { PaperMeta } from '@/lib/types/evaluation'
 
-export default function FormattingPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function FormattingPage() {
+  let initialPapers: PaperMeta[] = DEMO_PAPERS
+
+  if (isDatabaseConfigured()) {
+    try {
+      const db = getDb()
+      const rows = await db
+        .select({
+          id:            papers.id,
+          paper_number:  papers.paper_number,
+          title:         papers.title,
+          author:        papers.author,
+          affiliation:   papers.affiliation,
+          category:      papers.category,
+          status:        papers.status,
+          submitted_at:  papers.submitted_at,
+          extracted_text: papers.extracted_text,
+        })
+        .from(papers)
+        .where(inArray(papers.status, ['pending', 'reviewing', 'accepted', 'revision']))
+        .orderBy(desc(papers.submitted_at))
+        .limit(50)
+
+      if (rows.length > 0) {
+        initialPapers = rows.map((row) => ({
+          id:          row.paper_number ?? row.id,
+          _dbId:       row.id,
+          title:       row.title,
+          author:      row.author,
+          affiliation: row.affiliation,
+          category:    row.category,
+          status:      row.status as PaperMeta['status'],
+          submittedAt: row.submitted_at instanceof Date
+            ? row.submitted_at.toISOString().split('T')[0]
+            : String(row.submitted_at).split('T')[0],
+          text:        row.extracted_text ?? '',
+        }))
+      }
+    } catch {
+      // DB 오류 시 DEMO_PAPERS 폴백
+    }
+  }
   return (
     <div className="max-w-7xl mx-auto">
       {/* 페이지 헤더 */}
@@ -37,7 +85,7 @@ export default function FormattingPage() {
         </div>
       </div>
 
-      <FormattingClient />
+      <FormattingClient initialPapers={initialPapers} />
 
       {/* 학술지 규격 안내 */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 shadow-card p-5">

@@ -25,8 +25,8 @@ interface FormatResult {
 // 게재 확정 기고문만 서식 수정 대상
 const ELIGIBLE_STATUSES = ['accepted', 'reviewing', 'revision']
 
-export default function FormattingClient() {
-  const [papers] = useState<PaperMeta[]>(DEMO_PAPERS)
+export default function FormattingClient({ initialPapers }: { initialPapers?: PaperMeta[] }) {
+  const [papers] = useState<PaperMeta[]>(initialPapers ?? DEMO_PAPERS)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [options, setOptions] = useState<FormatOptions>(DEFAULT_OPTIONS)
   const [result, setResult] = useState<FormatResult | null>(null)
