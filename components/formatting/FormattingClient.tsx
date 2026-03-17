@@ -23,7 +23,7 @@ interface FormatResult {
 }
 
 // 게재 확정 기고문만 서식 수정 대상
-const ELIGIBLE_STATUSES = ['accepted', 'reviewing', 'revision']
+const ELIGIBLE_STATUSES = ['pending', 'accepted', 'reviewing', 'revision', 'rejected']
 
 export default function FormattingClient({ initialPapers }: { initialPapers?: PaperMeta[] }) {
   const [papers] = useState<PaperMeta[]>(initialPapers ?? DEMO_PAPERS)

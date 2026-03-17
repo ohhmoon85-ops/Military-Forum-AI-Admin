@@ -27,7 +27,7 @@ export default async function FormattingPage() {
           extracted_text: papers.extracted_text,
         })
         .from(papers)
-        .where(inArray(papers.status, ['pending', 'reviewing', 'accepted', 'revision']))
+        .where(inArray(papers.status, ['pending', 'reviewing', 'accepted', 'revision', 'rejected']))
         .orderBy(desc(papers.submitted_at))
         .limit(50)
 
