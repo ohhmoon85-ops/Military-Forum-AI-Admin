@@ -62,16 +62,30 @@ export default function FormattingClient({ initialPapers }: { initialPapers?: Pa
   const selected = papers.find((p) => p.id === selectedId) ?? null
 
   const handleFormat = async () => {
-    if (!selected?.text) return
+    if (!selected) return
     setLoading(true)
     setError(null)
     setResult(null)
 
     try {
+      // 텍스트가 없으면 DB에서 lazy-load
+      let textToFormat = selected.text
+      if ((!textToFormat || textToFormat.trim().length < 10) && selected._dbId) {
+        const detailRes = await fetch(`/api/papers/${selected._dbId}`)
+        const detailJson = await detailRes.json()
+        textToFormat = detailJson.paper?.extracted_text ?? ''
+      }
+
+      if (!textToFormat || textToFormat.trim().length < 10) {
+        setError('기고문 텍스트가 없습니다. 업로드 페이지에서 먼저 파일을 추출해 주세요.')
+        setLoading(false)
+        return
+      }
+
       const res = await fetch('/api/format', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: selected.text, title: selected.title, options }),
+        body: JSON.stringify({ text: textToFormat, title: selected.title, options }),
       })
       const json = await res.json()
       if (!res.ok || json.error) throw new Error(json.error ?? '서식 변환 실패')
