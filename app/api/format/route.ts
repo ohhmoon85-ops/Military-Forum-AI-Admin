@@ -46,6 +46,49 @@ async function refineToneWithClaude(text: string, apiKey: string): Promise<{ ref
   }
 }
 
+// ─── AI 맞춤법·문장 교정 프롬프트 ───────────────────────────────────────────
+
+const SPELLING_SYSTEM = `당신은 한국어 교정 전문가입니다.
+주어진 군사학 기고문 텍스트에서 다음을 교정하세요.
+
+1. 맞춤법 오류: 띄어쓰기, 철자 오류, 조사 오류 (예: "이었습니다" → "이었습니다", "않 된다" → "안 된다")
+2. 오타: 명백한 타이핑 실수 교정
+3. 문장 가독성: 너무 길거나 어색한 문장을 자연스럽게 개선 (의미 변경 금지)
+4. 중복 표현 제거: 같은 내용의 반복 표현 간결화
+
+금지 사항:
+- 내용·주장·사실 변경 금지
+- 전문 용어·고유명사 임의 변경 금지
+- 단락 구조(문단 나눔) 변경 금지
+
+교정된 본문만 반환하세요. 설명, 주석, 변경 목록을 추가하지 마세요.`
+
+async function correctSpellingWithClaude(text: string, apiKey: string): Promise<{ corrected: string; log: ChangeLog }> {
+  const client = new Anthropic({ apiKey })
+  const truncated = text.slice(0, 4000)
+
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 4096,
+    system: SPELLING_SYSTEM,
+    messages: [{ role: 'user', content: truncated }],
+  })
+
+  const corrected = message.content
+    .filter((b) => b.type === 'text')
+    .map((b) => (b as { type: 'text'; text: string }).text)
+    .join('') + (text.length > 4000 ? '\n\n' + text.slice(4000) : '')
+
+  return {
+    corrected,
+    log: {
+      rule: 'AI 맞춤법·문장 교정 (Claude Haiku)',
+      count: 1,
+      examples: ['맞춤법·오타 수정', '어색한 문장 개선', '중복 표현 제거'],
+    },
+  }
+}
+
 // ─── 핸들러 ──────────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
@@ -67,11 +110,29 @@ export async function POST(request: NextRequest) {
     let finalFormatted = ruleFormatted
     const allLogs = [...logs]
 
-    // 2. AI 문체 정제 (API 키 있고 옵션 활성화 시)
+    // 2. AI 맞춤법·문장 교정 (문체 정제보다 먼저 실행)
     const apiKey = process.env.ANTHROPIC_API_KEY
+    if (options.correctSpelling && apiKey) {
+      try {
+        const { corrected, log } = await correctSpellingWithClaude(finalFormatted, apiKey)
+        finalFormatted = corrected
+        allLogs.push(log)
+        stats.totalRules += 1
+        stats.totalChanges += 1
+        stats.formattedChars = corrected.replace(/\s/g, '').length
+        stats.charDiff = stats.formattedChars - stats.originalChars
+      } catch (err) {
+        console.error('Claude correctSpelling 오류:', err)
+        allLogs.push({ rule: 'AI 맞춤법·문장 교정 (실패)', count: 0, examples: ['API 오류로 건너뜀'] })
+      }
+    } else if (options.correctSpelling && !apiKey) {
+      allLogs.push({ rule: 'AI 맞춤법·문장 교정 (건너뜀)', count: 0, examples: ['ANTHROPIC_API_KEY 미설정'] })
+    }
+
+    // 3. AI 문체 정제 (학술 문어체 변환)
     if (options.refineTone && apiKey) {
       try {
-        const { refined, log } = await refineToneWithClaude(ruleFormatted, apiKey)
+        const { refined, log } = await refineToneWithClaude(finalFormatted, apiKey)
         finalFormatted = refined
         allLogs.push(log)
         stats.totalRules += 1
@@ -92,7 +153,7 @@ export async function POST(request: NextRequest) {
       formatted: finalFormatted,
       logs: allLogs,
       stats,
-      aiRefined: !!(options.refineTone && apiKey),
+      aiRefined: !!((options.refineTone || options.correctSpelling) && apiKey),
     })
   } catch (err) {
     console.error('/api/format 오류:', err)

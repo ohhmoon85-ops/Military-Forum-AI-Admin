@@ -36,6 +36,7 @@ export interface FormatOptions {
   standardizeTerms: boolean      // 군사 용어 표준화
   refineTone: boolean            // AI 문체 정제 (Claude)
   normalizeHeadings: boolean     // 장·절 번호 정규화
+  correctSpelling: boolean       // AI 맞춤법·문장 교정 (Claude)
 }
 
 export const DEFAULT_OPTIONS: FormatOptions = {
@@ -44,6 +45,7 @@ export const DEFAULT_OPTIONS: FormatOptions = {
   standardizeTerms: true,
   refineTone: false,
   normalizeHeadings: true,
+  correctSpelling: false,
 }
 
 // ─── 변경 로그 ───────────────────────────────────────────────────────────────

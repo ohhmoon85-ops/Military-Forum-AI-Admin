@@ -253,10 +253,17 @@ export default function FormattingClient({ initialPapers }: { initialPapers?: Pa
                     desc="로마자 대소문자 통일"
                   />
                   <OptionToggle
+                    id="spelling" label="맞춤법·문장 교정"
+                    checked={options.correctSpelling}
+                    onChange={(v) => setOptions((p) => ({ ...p, correctSpelling: v }))}
+                    desc="오타·띄어쓰기·어색한 문장 (API 키)"
+                    highlight
+                  />
+                  <OptionToggle
                     id="ai" label="AI 문체 정제"
                     checked={options.refineTone}
                     onChange={(v) => setOptions((p) => ({ ...p, refineTone: v }))}
-                    desc="Claude Haiku (API 키 필요)"
+                    desc="학술 문어체 변환 (API 키 필요)"
                     highlight
                   />
                 </div>
