@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Wand2, FileText, ChevronRight, Loader2, Download, CheckCircle2,
   Settings2, RefreshCw, Printer, User, Building2, BarChart2,
@@ -26,8 +26,34 @@ interface FormatResult {
 const ELIGIBLE_STATUSES = ['pending', 'accepted', 'reviewing', 'revision', 'rejected']
 
 export default function FormattingClient({ initialPapers }: { initialPapers?: PaperMeta[] }) {
-  const [papers] = useState<PaperMeta[]>(initialPapers ?? DEMO_PAPERS)
+  const [papers, setPapers] = useState<PaperMeta[]>(initialPapers ?? DEMO_PAPERS)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/papers?limit=50', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.papers && d.papers.length > 0) {
+          const mapped: PaperMeta[] = d.papers.map((p: {
+            id: string; paper_number?: string; title: string; author: string
+            affiliation: string; category: string; status: string
+            submitted_at: string; extracted_text?: string
+          }) => ({
+            id:          p.paper_number ?? p.id,
+            _dbId:       p.id,
+            title:       p.title,
+            author:      p.author,
+            affiliation: p.affiliation,
+            category:    p.category,
+            status:      p.status as PaperMeta['status'],
+            submittedAt: String(p.submitted_at).split('T')[0],
+            text:        p.extracted_text ?? '',
+          }))
+          setPapers(mapped)
+        }
+      })
+      .catch(() => {})
+  }, [])
   const [options, setOptions] = useState<FormatOptions>(DEFAULT_OPTIONS)
   const [result, setResult] = useState<FormatResult | null>(null)
   const [loading, setLoading] = useState(false)
